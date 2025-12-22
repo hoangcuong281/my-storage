@@ -6,7 +6,7 @@ class CategoryCreate(BaseModel):
     description: Optional[str] = None
 
 class CategoryResponse(CategoryCreate):
-    id: int
+    category_id: int
 
     class Config:
         from_attributes = True

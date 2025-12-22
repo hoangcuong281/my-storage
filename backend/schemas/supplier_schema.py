@@ -8,7 +8,7 @@ class SupplierCreate(BaseModel):
     note: Optional[str] = None
 
 class SupplierResponse(SupplierCreate):
-    id: int
+    supplier_id: int
 
     class Config:
         from_attributes = True

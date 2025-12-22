@@ -11,7 +11,7 @@ class ProductCreate(BaseModel):
     note: Optional[str]
 
 class ProductResponse(ProductCreate):
-    id: int
+    product_id: int
     quantity: int
     class Config:
         from_attributes = True
