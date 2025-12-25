@@ -15,8 +15,8 @@ class StockIn(Base):
     __tablename__ = "stock_in"
 
     stock_in_id = Column(Integer, primary_key=True, index=True)
-    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
-    supplier_id = Column(Integer, ForeignKey("suppliers.id"), nullable=True)
+    product_id = Column(Integer, ForeignKey("products.product_id"), nullable=False)
+    supplier_id = Column(Integer, ForeignKey("suppliers.supplier_id"), nullable=True)
     quantity = Column(Integer, nullable=False)
     import_price = Column(DECIMAL(12, 2))
     import_date = Column(Date, nullable=False)
@@ -26,7 +26,7 @@ class StockOut(Base):
     __tablename__ = "stock_out"
 
     stock_out_id = Column(Integer, primary_key=True, index=True)
-    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.product_id"), nullable=False)
     quantity = Column(Integer, nullable=False)
     reason = Column(Enum(StockOutReason), nullable=False)
     export_date = Column(Date, nullable=False)
