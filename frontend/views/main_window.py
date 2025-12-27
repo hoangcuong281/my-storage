@@ -9,11 +9,15 @@ from views.supplier_view import SupplierView
 from views.category_view import CategoryView
 from views.stock_in_view import StockInView
 from views.stock_out_view import StockOutView
+from views.user_view import UserView
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, user):
         super().__init__()
+        self.user = user          # {id, username, role}
+        self.role = user["role"]
+
         self.setWindowTitle("Warehouse Management System")
         self.resize(1200, 650)
 
@@ -27,52 +31,75 @@ class MainWindow(QMainWindow):
         sidebar = QVBoxLayout()
         sidebar.setSpacing(10)
 
-        title = QLabel("📦 QUẢN LÝ KHO")
+        title = QLabel(f"👤 {self.user['username']} ({self.role})")
         title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("font-weight: bold; font-size: 16px;")
+        title.setStyleSheet("font-weight: bold;")
 
         btn_products = QPushButton("Sản phẩm")
         btn_suppliers = QPushButton("Nhà cung cấp")
         btn_categories = QPushButton("Nhóm hàng")
         btn_stock_in = QPushButton("Nhập hàng")
         btn_stock_out = QPushButton("Xuất hàng")
+        btn_users = QPushButton("Người dùng")  # admin
 
-        for btn in (
-            btn_products, btn_suppliers, btn_categories,
-            btn_stock_in, btn_stock_out
-        ):
-            btn.setMinimumHeight(40)
+        # ===== CONTENT =====
+        self.stack = QStackedWidget()
 
-        sidebar.addWidget(title)
-        sidebar.addSpacing(20)
-        sidebar.addWidget(btn_products)
-        sidebar.addWidget(btn_suppliers)
-        sidebar.addWidget(btn_categories)
-        sidebar.addWidget(btn_stock_in)
-        sidebar.addWidget(btn_stock_out)
+        views = {
+            "products": ProductView(),
+            "suppliers": SupplierView(),
+            "categories": CategoryView(),
+            "stock_in": StockInView(),
+            "stock_out": StockOutView(),
+            "users": UserView()
+        }
+
+        for v in views.values():
+            self.stack.addWidget(v)
+
+        # ===== ROLE PERMISSION =====
+        if self.role == "manager":
+            sidebar.addWidget(btn_products)
+            sidebar.addWidget(btn_suppliers)
+            sidebar.addWidget(btn_categories)
+            sidebar.addWidget(btn_stock_in)
+            sidebar.addWidget(btn_stock_out)
+
+            btn_products.clicked.connect(lambda: self.stack.setCurrentWidget(views["products"]))
+            btn_suppliers.clicked.connect(lambda: self.stack.setCurrentWidget(views["suppliers"]))
+            btn_categories.clicked.connect(lambda: self.stack.setCurrentWidget(views["categories"]))
+            btn_stock_in.clicked.connect(lambda: self.stack.setCurrentWidget(views["stock_in"]))
+            btn_stock_out.clicked.connect(lambda: self.stack.setCurrentWidget(views["stock_out"]))
+
+        elif self.role == "staff":
+            sidebar.addWidget(btn_stock_in)
+            sidebar.addWidget(btn_stock_out)
+
+            btn_stock_in.clicked.connect(lambda: self.stack.setCurrentWidget(views["stock_in"]))
+            btn_stock_out.clicked.connect(lambda: self.stack.setCurrentWidget(views["stock_out"]))
+
+        elif self.role == "admin":
+            sidebar.addWidget(btn_products)
+            sidebar.addWidget(btn_suppliers)
+            sidebar.addWidget(btn_categories)
+            sidebar.addWidget(btn_stock_in)
+            sidebar.addWidget(btn_stock_out)
+            sidebar.addWidget(btn_users)
+
+            btn_products.clicked.connect(lambda: self.stack.setCurrentWidget(views["products"]))
+            btn_suppliers.clicked.connect(lambda: self.stack.setCurrentWidget(views["suppliers"]))
+            btn_categories.clicked.connect(lambda: self.stack.setCurrentWidget(views["categories"]))
+            btn_stock_in.clicked.connect(lambda: self.stack.setCurrentWidget(views["stock_in"]))
+            btn_stock_out.clicked.connect(lambda: self.stack.setCurrentWidget(views["stock_out"]))
+            btn_users.clicked.connect(lambda: self.stack.setCurrentWidget(views["users"]))
+
+        sidebar.insertWidget(0, title)
         sidebar.addStretch()
 
         sidebar_widget = QWidget()
         sidebar_widget.setLayout(sidebar)
-        sidebar_widget.setFixedWidth(200)
-        sidebar_widget.setStyleSheet(
-            "background-color: #f0f0f0;"
-        )
-
-        # ===== CONTENT =====
-        self.stack = QStackedWidget()
-        self.stack.addWidget(ProductView())     # index 0
-        self.stack.addWidget(SupplierView())    # index 1
-        self.stack.addWidget(CategoryView())    # index 2
-        self.stack.addWidget(StockInView())     # index 3
-        self.stack.addWidget(StockOutView())    # index 4
-
-        # ===== SIGNAL =====
-        btn_products.clicked.connect(lambda: self.stack.setCurrentIndex(0))
-        btn_suppliers.clicked.connect(lambda: self.stack.setCurrentIndex(1))
-        btn_categories.clicked.connect(lambda: self.stack.setCurrentIndex(2))
-        btn_stock_in.clicked.connect(lambda: self.stack.setCurrentIndex(3))
-        btn_stock_out.clicked.connect(lambda: self.stack.setCurrentIndex(4))
+        sidebar_widget.setFixedWidth(220)
+        sidebar_widget.setStyleSheet("background:#f0f0f0")
 
         main_layout.addWidget(sidebar_widget)
         main_layout.addWidget(self.stack)
