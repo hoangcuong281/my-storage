@@ -15,7 +15,7 @@ def get_current_user(
             detail="Chưa đăng nhập"
         )
 
-    user = db.query(Users).filter(Users.id == user_id).first()
+    user = db.query(Users).filter(Users.user_id == user_id).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

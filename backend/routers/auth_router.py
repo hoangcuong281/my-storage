@@ -41,14 +41,14 @@ def login(
         )
 
     # ===== LƯU SESSION =====
-    request.session["user_id"] = user.id
+    request.session["user_id"] = user.user_id
     request.session["username"] = user.username
     request.session["role"] = user.role.value  # ⚠️ ENUM → string
 
     return {
         "message": "Đăng nhập thành công",
         "user": {
-            "id": user.id,
+            "user_id": user.user_id,
             "username": user.username,
             "full_name": user.full_name,
             "role": user.role.value

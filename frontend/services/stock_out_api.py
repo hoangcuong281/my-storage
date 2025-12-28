@@ -1,10 +1,8 @@
-import requests
-
-BASE_URL = "http://127.0.0.1:8000"
+from services.api_client import APIClient
 
 # Lấy danh sách đơn xuất
 def get_all_stock_out():
-    res = requests.get(f"{BASE_URL}/stock/stockout")
+    res = APIClient.get("/stock/stockout")
     res.raise_for_status()
     return res.json()
 
@@ -16,7 +14,7 @@ def create_stock_out(data):
         "reason": data["reason"],
         "export_date": data["export_date"],
     }
-    res = requests.post(f"{BASE_URL}/stock/stockout", json=payload)
+    res = APIClient.post("/stock/stockout", json=payload)
     res.raise_for_status()
     return res.json()
 
@@ -28,12 +26,12 @@ def update_stock_out(stock_out_id, data):
         "reason": data["reason"],
         "export_date": data["export_date"],
     }
-    res = requests.put(f"{BASE_URL}/stock/stockout/{stock_out_id}", json=payload)
+    res = APIClient.put(f"/stock/stockout/{stock_out_id}", json=payload)
     res.raise_for_status()
     return res.json()
 
 # Xóa đơn xuất
 def delete_stock_out(stock_out_id):
-    res = requests.delete(f"{BASE_URL}/stock/stockout/{stock_out_id}")
+    res = APIClient.delete(f"/stock/stockout/{stock_out_id}")
     res.raise_for_status()
     return res.json()

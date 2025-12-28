@@ -20,6 +20,8 @@ class StockIn(Base):
     quantity = Column(Integer, nullable=False)
     import_price = Column(DECIMAL(12, 2))
     import_date = Column(Date, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+
 
 
 class StockOut(Base):
@@ -30,3 +32,4 @@ class StockOut(Base):
     quantity = Column(Integer, nullable=False)
     reason = Column(Enum(StockOutReason), nullable=False)
     export_date = Column(Date, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)

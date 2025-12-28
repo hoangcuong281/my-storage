@@ -27,14 +27,17 @@ class MainWindow(QMainWindow):
         central = QWidget()
         main_layout = QHBoxLayout()
 
-        # ===== SIDEBAR =====
+        # ================= SIDEBAR =================
         sidebar = QVBoxLayout()
         sidebar.setSpacing(10)
 
+        # ----- USER TITLE -----
         title = QLabel(f"👤 {self.user['username']} ({self.role})")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("font-weight: bold;")
+        sidebar.addWidget(title)
 
+        # ----- BUTTONS -----
         btn_products = QPushButton("Sản phẩm")
         btn_suppliers = QPushButton("Nhà cung cấp")
         btn_categories = QPushButton("Nhóm hàng")
@@ -42,7 +45,7 @@ class MainWindow(QMainWindow):
         btn_stock_out = QPushButton("Xuất hàng")
         btn_users = QPushButton("Người dùng")  # admin
 
-        # ===== CONTENT =====
+        # ================= CONTENT =================
         self.stack = QStackedWidget()
 
         views = {
@@ -51,13 +54,16 @@ class MainWindow(QMainWindow):
             "categories": CategoryView(),
             "stock_in": StockInView(),
             "stock_out": StockOutView(),
-            "users": UserView()
         }
+
+        if self.role == "admin":
+            views["users"] = UserView()
+
 
         for v in views.values():
             self.stack.addWidget(v)
 
-        # ===== ROLE PERMISSION =====
+        # ================= ROLE PERMISSION =================
         if self.role == "manager":
             sidebar.addWidget(btn_products)
             sidebar.addWidget(btn_suppliers)
@@ -93,9 +99,21 @@ class MainWindow(QMainWindow):
             btn_stock_out.clicked.connect(lambda: self.stack.setCurrentWidget(views["stock_out"]))
             btn_users.clicked.connect(lambda: self.stack.setCurrentWidget(views["users"]))
 
-        sidebar.insertWidget(0, title)
-        sidebar.addStretch()
+        # ⬇⬇⬇ DÒNG QUAN TRỌNG ⬇⬇⬇
+        sidebar.addStretch()   # đẩy logout xuống đáy
 
+        # ================= LOGOUT BUTTON =================
+        btn_logout = QPushButton("Đăng xuất")
+        btn_logout.setStyleSheet("""
+            background-color: #ff4d4d;
+            color: white;
+            font-weight: bold;
+            padding: 8px;
+        """)
+        btn_logout.clicked.connect(self.logout)
+        sidebar.addWidget(btn_logout)
+
+        # ================= WRAP SIDEBAR =================
         sidebar_widget = QWidget()
         sidebar_widget.setLayout(sidebar)
         sidebar_widget.setFixedWidth(220)
@@ -106,3 +124,25 @@ class MainWindow(QMainWindow):
 
         central.setLayout(main_layout)
         self.setCentralWidget(central)
+        
+        if self.role == "staff":
+            self.stack.setCurrentWidget(views["stock_in"])
+        elif self.role == "manager":
+            self.stack.setCurrentWidget(views["products"])
+        elif self.role == "admin":
+            self.stack.setCurrentWidget(views["products"])
+
+    def logout(self):
+        from services.api_client import APIClient
+        from views.login_view import LoginView
+
+        # Call API logout
+        try:
+            APIClient.post("/auth/logout")
+        except Exception as e:
+            print(f"Logout API error: {e}")
+
+        # Switch to Login View
+        self.login_window = LoginView()
+        self.login_window.show()
+        self.close()

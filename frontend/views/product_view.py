@@ -14,8 +14,8 @@ from services.suppliers_api import get_all_suppliers
 class ValidateComboBox(QComboBox):
     def __init__(self, data_map, field_name, parent=None):
         super().__init__(parent)
-        self.data_map = data_map      # name -> id
-        self.field_name = field_name  # "Category" / "Supplier"
+        self.data_map = data_map  
+        self.field_name = field_name 
 
         self.setEditable(True)
         self.setInsertPolicy(QComboBox.NoInsert)
@@ -142,6 +142,9 @@ class ProductView(QWidget):
         self.load_products()
 
     # ================= UI =================
+    def showEvent(self, event):
+        self.load_products()
+        super().showEvent(event)
     def init_ui(self):
         main_layout = QVBoxLayout()
 
@@ -173,9 +176,9 @@ class ProductView(QWidget):
 
         # 📋 Table
         self.table = QTableWidget()
-        self.table.setColumnCount(6)
+        self.table.setColumnCount(7)
         self.table.setHorizontalHeaderLabels([
-            "Mã SP", "Tên SP", "Category", "Giá", "Supplier", "Vị trí"
+            "Mã SP", "Tên SP", "Category", "Số lượng", "Giá", "Supplier", "Vị trí"
         ])
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -198,9 +201,10 @@ class ProductView(QWidget):
             self.table.setItem(row, 0, QTableWidgetItem(p["code"]))
             self.table.setItem(row, 1, QTableWidgetItem(p["name"]))
             self.table.setItem(row, 2, QTableWidgetItem(str(p["category_id"])))
-            self.table.setItem(row, 3, QTableWidgetItem(f"{p['price']:,}"))
-            self.table.setItem(row, 4, QTableWidgetItem(str(p["supplier_id"])))
-            self.table.setItem(row, 5, QTableWidgetItem(p["location"]))
+            self.table.setItem(row, 3, QTableWidgetItem(f"{p['quantity']:,}"))
+            self.table.setItem(row, 4, QTableWidgetItem(f"{p['price']:,}"))
+            self.table.setItem(row, 5, QTableWidgetItem(str(p["supplier_id"])))
+            self.table.setItem(row, 6, QTableWidgetItem(p["location"]))
 
     # ================= SEARCH =================
     def search_products(self):
