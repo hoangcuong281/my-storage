@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
     QLabel, QLineEdit, QPushButton,
     QTableWidget, QTableWidgetItem,
     QMessageBox, QDialog, QFormLayout,
-    QComboBox
+    QComboBox, QHeaderView
 )
 from PyQt5.QtCore import Qt
 
@@ -177,6 +177,7 @@ class ProductView(QWidget):
         # 📋 Table
         self.table = QTableWidget()
         self.table.setColumnCount(7)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.setHorizontalHeaderLabels([
             "Mã SP", "Tên SP", "Category", "Số lượng", "Giá", "Supplier", "Vị trí"
         ])

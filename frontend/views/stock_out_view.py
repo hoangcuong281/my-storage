@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QTableWidget, QTableWidgetItem,
     QMessageBox, QDialog, QFormLayout,
-    QComboBox, QLineEdit, QDateEdit, QLabel
+    QComboBox, QLineEdit, QDateEdit, QLabel, QHeaderView
 )
 from PyQt5.QtCore import Qt, QDate
 from requests.exceptions import HTTPError
@@ -147,6 +147,7 @@ class StockOutView(QWidget):
         # Bảng
         self.table = QTableWidget()
         self.table.setColumnCount(4)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.setHorizontalHeaderLabels(
             ["Sản phẩm", "Số lượng", "Lý do", "Ngày xuất"]
         )

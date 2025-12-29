@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton,
     QTableWidget, QTableWidgetItem,
-    QMessageBox, QDialog, QFormLayout
+    QMessageBox, QDialog, QFormLayout, QHeaderView
 )
 from PyQt5.QtCore import Qt
 
@@ -93,7 +93,7 @@ class CategoryView(QWidget):
         ])
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         main_layout.addLayout(search_layout)
         main_layout.addLayout(btn_layout)

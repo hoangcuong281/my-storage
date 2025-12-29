@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QPushButton,
     QTableWidget, QTableWidgetItem,
     QHBoxLayout, QMessageBox,
-    QDialog, QLabel, QLineEdit, QComboBox
+    QDialog, QLabel, QLineEdit, QComboBox, QHeaderView
 )
 
 from services.api_client import APIClient
@@ -90,13 +90,13 @@ class UserView(QWidget):
         layout = QVBoxLayout()
 
         # ===== TABLE =====
-        self.table = QTableWidget(0, 4)
+        self.table = QTableWidget(0, 3)
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.setHorizontalHeaderLabels(
-            ["ID", "Username", "Full name", "Role"]
+            ["Username", "Full name", "Role"]
         )
         self.table.setSelectionBehavior(self.table.SelectRows)
         self.table.setEditTriggers(self.table.NoEditTriggers)
-
         # ===== BUTTON =====
         btn_add = QPushButton("➕ Thêm")
         btn_edit = QPushButton("✏️ Sửa")
@@ -126,10 +126,9 @@ class UserView(QWidget):
         self.table.setRowCount(len(users))
 
         for row, u in enumerate(users):
-            self.table.setItem(row, 0, QTableWidgetItem(str(u["id"])))
-            self.table.setItem(row, 1, QTableWidgetItem(u["username"]))
-            self.table.setItem(row, 2, QTableWidgetItem(u["full_name"]))
-            self.table.setItem(row, 3, QTableWidgetItem(u["role"]))
+            self.table.setItem(row, 0, QTableWidgetItem(u["username"]))
+            self.table.setItem(row, 1, QTableWidgetItem(u["full_name"]))
+            self.table.setItem(row, 2, QTableWidgetItem(u["role"]))
 
     # ================= ADD =================
     def add_user(self):
@@ -161,10 +160,9 @@ class UserView(QWidget):
             return
 
         user = {
-            "id": self.table.item(row, 0).text(),
-            "username": self.table.item(row, 1).text(),
-            "full_name": self.table.item(row, 2).text(),
-            "role": self.table.item(row, 3).text()
+            "username": self.table.item(row, 0).text(),
+            "full_name": self.table.item(row, 1).text(),
+            "role": self.table.item(row, 2).text()
         }
 
         dialog = UserDialog(user)
@@ -173,7 +171,7 @@ class UserView(QWidget):
             return
 
         res = APIClient.put(
-            f"/users/{user['id']}",
+            f"/users/{user['user_id']}",
             json={
                 "full_name": dialog.txt_fullname.text(),
                 "role": dialog.cb_role.currentText()

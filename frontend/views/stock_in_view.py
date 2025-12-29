@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QTableWidget, QTableWidgetItem,
     QMessageBox, QDialog, QFormLayout,
-    QComboBox, QLineEdit, QDateEdit
+    QComboBox, QLineEdit, QDateEdit, QHeaderView
 )
 from PyQt5.QtCore import Qt, QDate
 
@@ -107,7 +107,7 @@ class StockInView(QWidget):
         ])
         self.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.table.setEditTriggers(QTableWidget.NoEditTriggers)
-
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         layout.addLayout(btn_layout)
         layout.addWidget(self.table)
         self.setLayout(layout)
